@@ -1,0 +1,109 @@
+﻿@model Authentication.Helper.Cart
+
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<h1 class="text-center">Your Cart</h1>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Id</th>
+                <th scope="col">Image</th>
+                <th scope="col">Description</th>
+                <th scope="col">Category</th>
+                <th scope="col" style="text-align:right;">Quantity</th>
+                <th scope="col" style="text-align:right;">Old Price</th>
+                <th scope="col" style="text-align:right;">Discount</th>
+                <th scope="col" style="text-align:right;">New Price</th>
+                <th scope="col" style="text-align:right;">Amount</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int count = 0;
+            }
+            @foreach (var item in Model.List.Values)
+            {
+                <tr>
+                    <td>@(++count)</td>
+                    <td>@item.Id</td>
+                    <td>
+                        <img src="~/products/@(item.Id).jpg" width="100" class="img-thumbnail" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category)
+                    </td>
+                    <td style="text-align:right;">
+                        <input type="number" min="1" id="quantity-@item.Id" value="@item.Quantity" class="form-control" />
+                    </td>
+                    <td style="text-align:right;">
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td style="text-align:right;">
+                        @Html.DisplayFor(modelItem => item.Discount)
+                    </td>
+                    <td style="text-align:right;">
+                        @Html.DisplayFor(modelItem => item.NewPrice)
+                    </td>
+                    <td style="text-align:right;">
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-primary update" asp-action="Update" data-id="@item.Id" asp-route-id="@item.Id" asp-route-quantity="-1">
+                                <i class="bi bi-arrow-clockwise"></i> Update
+                            </a> 
+
+                            <a class="btn btn-danger" asp-action="Remove" asp-route-id="@item.Id">
+                                <i class="bi bi-trash"></i> Remove
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="table-dark">
+            <tr>
+                <th colspan="9" style="text-align:right;">Total:</th>
+                <th style="text-align:right;">@Model.TotalAmount.ToString("C2")</th>
+                <th>
+                    <a asp-action="Empty" class="btn btn-warning">
+                        <i class="bi bi-trash"></i> Empty
+                    </a>
+                </th>
+                <th>
+                    <button id="order-button" type="button" class="btn btn-success">
+                        <i class="bi bi-cart-plus"></i> Order
+                    </button>
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".update").click(function () {
+                var id = $(this).data("id");
+                var quantity = $("#quantity-" + id).val();
+                var url = `/Cart/Update/${id}?quantity=${quantity}`;
+                $(this).attr("href", url);
+            });
+
+            $("#order-button").click(function () {
+                if (confirm("Are you sure you want to place this order?")) {
+                    window.location.href = "@Url.Action("Order", "Cart")";
+                }
+            });
+        });
+    </script>
+}

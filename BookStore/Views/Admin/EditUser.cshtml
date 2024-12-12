@@ -1,0 +1,29 @@
+﻿@model Authentication.Models.EditUser
+
+<h1>Edit User</h1>
+
+<form asp-action="EditUser" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Roles"></label>
+        <select asp-for="Roles" class="form-control" multiple>
+            @foreach (var role in (List<string>)ViewBag.AllRoles)
+            {
+                @if (Model.Roles.Contains(role))
+                {
+                    <option value="@role" selected>@role</option>
+                }
+                else
+                {
+                    <option value="@role">@role</option>
+                }
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
